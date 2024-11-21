@@ -11,7 +11,6 @@ from langchain_postgres.vectorstores import PGVector
 from langchain_postgres import PostgresChatMessageHistory
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -37,11 +36,9 @@ chatgroq_model = ChatGroq(
 # Check if embeddings already exist in the database
 def embeddings_exist(vectorstore_table_name="combined_embeddings"):
     try:
-        # Try to connect and check if the table exists
         connection = psycopg.connect(DB_CONNECTION_URL_2)
         cursor = connection.cursor()
         
-        # Check if the table exists
         cursor.execute(f"""
             SELECT to_regclass('{vectorstore_table_name}');
         """)
@@ -54,6 +51,7 @@ def embeddings_exist(vectorstore_table_name="combined_embeddings"):
     except Exception as e:
         print(f"Error checking if embeddings exist: {e}")
         return False
+
 
 
 # Initialize vectorstore only if embeddings don't exist
@@ -77,7 +75,6 @@ def store_combined_embeddings(documents, collection_name="combined_data_collecti
             embeddings,
             connection=DB_CONNECTION_URL_2,
             collection_name=collection_name
-            # No need for postgres_table_name argument
         )
         print("Storing embeddings...")
         return vectorstore
@@ -102,7 +99,6 @@ def insert_chat_message(chat_history, query, response):
     chat_history.add_user_message(query)
     chat_history.add_ai_message(response)
 
-# Retrieve the most relevant document
 def get_embedding_response(query, vectorstore):
     try:
        
@@ -114,7 +110,6 @@ def get_embedding_response(query, vectorstore):
         print(f"Error during similarity search: {e}")
         return None
 
-# Start chat
 def start_chat():
     session_id = str(uuid.uuid4())
     chat_history = initialize_chat_history(session_id)
