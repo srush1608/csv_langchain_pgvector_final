@@ -1,0 +1,7 @@
+Flask
+psycopg2
+python-dotenv
+langchain
+langchain-google-genai
+langchain-postgres
+langchain-groq

@@ -1,0 +1,117 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #chat-box {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 500px; /* Fixed height for the entire chat box */
+            display: flex;
+            flex-direction: column;
+        }
+        #messages {
+            flex: 1; /* Allow messages to take up available space */
+            overflow-y: auto; /* Enable vertical scrolling for messages */
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc; /* Optional: border for better visibility */
+            border-radius: 5px; /* Rounded corners for the messages area */
+            background-color: #f9f9f9; /* Light background for messages */
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+            position: relative;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto; /* Align user messages to the right */
+        }
+        .ai-message {
+            background-color: #f1f1f1;
+            color: #333;
+            margin-right: auto; /* Align AI messages to the left */
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff; /* Change border color on focus */
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat with AI</h1>
+    <div id="chat-box">
+        <div id="messages"></div>
+    </div>
+    <form id="chat-form" method="POST" action="/chat">
+        <input type="text" name="query" placeholder="Type your message..." required>
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        const form = document.getElementById('chat-form');
+        const messagesDiv = document.getElementById('messages');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            messagesDiv.innerHTML += `<div class="message user-message"><strong>You:</strong> ${formData.get('query')}</div>`;
+            messagesDiv.innerHTML += `<div class="message ai-message"><strong>AI:</strong> ${data.response}</div>`;
+            form.reset();
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+        };
+    </script>
+</body>
+</html>
